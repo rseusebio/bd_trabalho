@@ -1,0 +1,61 @@
+Paciente
+(
+    id_paciente, 
+    sexo, 
+    ano_nascimento   ( excluir AAAA, YYYY -> null )
+    uf               ( pode ser null -> UU )
+    municipio        ( pode ser null -> MMMM )
+    
+    PK( id_paciente )
+
+    cep_reduzido( excluir ) há apenas dois valores possíveis (CCCC ou 12460 ( que sao todos de campos do jordao))
+    pais ( excluir ) há apenas dois valores (BR ou XX )
+)
+
+Atendimento 
+(
+    id_atendimento, 
+    dt_atendimento, 
+    tipo_atendimento, 
+    de_desfecho, 
+    dt_desfecho
+
+    FK( id_paciente ) ref Paciente( id_paciente )
+    FK( id_clinica ) ref Clinica( id_clinica )
+
+    PK( id_atendimento )
+)
+
+Clinica 
+(
+    id_clinica, 
+    de_clinica 
+
+    PK( de_clinica )
+)
+
+Analito 
+(
+    de_analito,
+    cd_unidade,
+    valor_referencia
+
+    PK( de_analito )
+)
+
+Exame 
+(
+    id,
+    de_exame, 
+    dt_coleta, 
+    de_resultado
+    de_origem,
+
+    de_analito
+    id_atendimento
+    
+    FK( de_analito ) ref Analito( de_analito )
+    FK( id_atendimento ) ref Atendimento(id_atendimento)
+
+    PK( id )
+)
