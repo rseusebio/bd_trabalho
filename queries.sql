@@ -127,8 +127,6 @@ and analito like "Cálculo p/não afrodescendente MDRD"
 and descricao like "Calculo da Estimativa da Taxa, de Filtracao Glomular, soro";
 
 
-
-
 select id_atendimento, origem, count(*) 
 from Exame 
 group by id_atendimento, origem 

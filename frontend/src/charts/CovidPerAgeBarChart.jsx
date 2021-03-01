@@ -6,7 +6,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import "./styles.css";
+import "./CovidPerAgeBarChart.css";
 
 const axios = require("axios");
 
@@ -23,47 +23,51 @@ const SelectCity = ({ city, setState }) =>
         'Sao Paulo'
     ];
     
-    console.info( "city: " + city );
-
     return (
-        <div className={"selection-bar-container"}>
+        <div className={"covidage-selection-container"}>
+
+            <h2>
+                Casos por ano de nascimento
+            </h2>
+
             <FormControl variant="outlined">
 
-            <InputLabel id="demo-simple-select-outlined-label">
-                Municipio
-            </InputLabel>
+                <InputLabel id="demo-simple-select-outlined-label">
+                    Municipio
+                </InputLabel>
 
-            <Select
-            labelId="demo-simple-select-outlined-label"
-            id="demo-simple-select-outlined"
-            value={city}
-            onChange={( v )=>{
-                const c = v.target.value;
-                console.info( "next city: ", c);
-                setState({
-                    loading: true, 
-                    city: c, 
-                    data: null, 
-                    err: null
-                })
-            }}
-            label="Municipio"
-            >
-                {
-                    cities.map( v => {
-                        return (
-                            <MenuItem
-                                key={v.toLocaleLowerCase()} 
-                                value={v.toLowerCase()}>
-                                {
-                                    v
-                                }
-                            </MenuItem>
-                        )
-                    })
-                }
-            </Select>
+                <Select
+                    labelId="demo-simple-select-outlined-label"
+                    id="demo-simple-select-outlined"
+                    value={city}
+                    onChange={( v )=>{
+                        const c = v.target.value;
+                        console.info( "next city: ", c);
+                        setState({
+                            loading: true, 
+                            city: c, 
+                            data: null, 
+                            err: null
+                        })
+                    }}
+                    label="Municipio"
+                    >
+                        {
+                            cities.map( v => {
+                                return (
+                                    <MenuItem
+                                        key={v.toLocaleLowerCase()} 
+                                        value={v.toLowerCase()}>
+                                        {
+                                            v
+                                        }
+                                    </MenuItem>
+                                )
+                            })
+                        }
+                </Select>
         </FormControl>
+
       </div>
     )
 
@@ -71,7 +75,8 @@ const SelectCity = ({ city, setState }) =>
 const BarChart = ({ data }) => 
 {   
     return (
-        <div className={"barchart-container"}>
+        <div className={"covidage-barchart-container"}>
+
             <ResponsiveBar
                 data={data}
                 keys={[ 'value' ]}
@@ -116,7 +121,7 @@ const BarChart = ({ data }) =>
                     tickSize: 5,
                     tickPadding: 5,
                     tickRotation: 0,
-                    legend: 'country',
+                    legend: 'Faixa de nascimento',
                     legendPosition: 'middle',
                     legendOffset: 32
                 }}
@@ -124,7 +129,7 @@ const BarChart = ({ data }) =>
                     tickSize: 5,
                     tickPadding: 5,
                     tickRotation: 0,
-                    legend: 'food',
+                    legend: 'Casos',
                     legendPosition: 'middle',
                     legendOffset: -40
                 }}
@@ -159,15 +164,16 @@ const BarChart = ({ data }) =>
                 motionStiffness={90}
                 motionDamping={15}
             />
+
         </div>
 
     );
 
 }
 
-const CovidPerAgeBarChart = () =>
+const DynamicBarChart = () =>
 {
-    const  [{ loading, data, err, city}, setState ] = useState({ loading: true, data: null, err: null, city:"sao paulo" });
+    const  [{ loading, data, err, city}, setState ] = useState({ loading: true, data: null, err: null, city: "sao paulo" });
 
     if(loading)
     {
@@ -206,13 +212,28 @@ const CovidPerAgeBarChart = () =>
     }
 
     return (
-        <div className={"barchart-root"}>
+        <div className={"covidage-barchart-root"}>
+
             <SelectCity
                 city={city}
                 setState={setState}/>
+
             <BarChart
                 data={data}/>
+
         </div>  
+    )
+}
+
+const CovidPerAgeBarChart = () => 
+{
+    return (
+        <div
+            className="covidage-pod">
+
+            <DynamicBarChart/>        
+
+        </div>
     )
 }
 

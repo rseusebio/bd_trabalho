@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { ResponsiveBar } from '@nivo/bar'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Alert from '@material-ui/lab/Alert';
+import "./OutcomeBarChart.css"
 
 const axios = require("axios");
 
-
-const OutcomeBarChart = () => 
+const BarChart = () => 
 {   
     const  [{ loading, data, err}, setState ] = useState({ loading: true, data: null, err: null});
 
@@ -53,7 +53,7 @@ const OutcomeBarChart = () =>
                 padding={0.3}
                 valueScale={{ type: 'linear' }}
                 indexScale={{ type: 'band', round: true }}
-                colors={{ scheme: 'nivo' }}
+                colors={{ scheme: 'set3' }}
                 defs={[
                     {
                         id: 'dots',
@@ -75,12 +75,6 @@ const OutcomeBarChart = () =>
                     }
                 ]}
                 fill={[
-                    {
-                        match: {
-                            id: 'alta'
-                        },
-                        id: 'dots'
-                    },
                     {
                         match: {
                             id: 'obito'
@@ -139,6 +133,29 @@ const OutcomeBarChart = () =>
                 motionDamping={15}
             />
         )
+}
+
+const OutcomeBarChart = () => 
+{
+    return (
+        <div 
+            className="outcome-barchart-root">
+
+            <div 
+                className="outcome-barchart-header">
+                <h2
+                    className="outcome-barchart-text">
+                    Desfechos (sem alta) 
+                </h2>
+            </div>
+            
+            <div 
+                className="outcome-barchart-container">
+                <BarChart/>
+            </div>
+        
+        </div>
+    )
 }
 
 export default OutcomeBarChart;

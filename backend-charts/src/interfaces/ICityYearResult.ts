@@ -1,4 +1,3 @@
-import ICityResultMonthQtd from "./ICityResultMonthQtd";
 
 interface ICityYearResult
 {

@@ -4,12 +4,20 @@
         select municipio, count(*) as qtd 
         from Paciente group by municipio;
 
+        CREATE index municipio_index on Paciente (municipio);
+        ALTER TABLE Paciente ADD INDEX paciente_index (id_paciente);
+
         /* B) número de atendimentos por cidade */
         select municipio, count(*) as qtd
         from Paciente
         inner join Atendimento
         on Paciente.id_paciente = Atendimento.id_paciente
         group by municipio;
+
+        ALTER TABLE Atendimento ADD INDEX paciente_index (id_paciente);
+        ALTER TABLE Atendimento ADD INDEX atendimento_index (id_atendimento);
+        
+
 
         /* C) Media atendimento por cidade */ 
         select 
@@ -47,12 +55,13 @@
         where 
             -- Paciente.municipio is not null and 
             Atendimento.desfecho is not null 
+            -- and Atendimento.desfecho not like "%alta%"
         group by 
             Paciente.municipio,  
             Atendimento.desfecho
         order by 
             Paciente.municipio;
-    
+            
 
     --numero de casos de covid por cidade
 
@@ -81,6 +90,8 @@
         on table1.id_atendimento = table2.id_atendimento
         group by de_resultado, municipio
         order by municipio, de_resultado;
+    
+        ALTER TABLE Exame ADD INDEX exame_index (de_exame);
     
     -- Numero de diagostico de covid por mes ( por cidade )
     -- line chart

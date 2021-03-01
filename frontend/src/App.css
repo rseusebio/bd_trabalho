@@ -34,4 +34,36 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
+
+  margin-bottom: 10px;
+}
+
+.page-header
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+
+  min-width: 100%;
+
+  height: 50px;
+
+  background-color: #45b5c9;
+  /* background-color: #4d85ff; */
+
+  margin: 0px;
+  padding: 0px;
+
+  padding-left: 10px;
+
+}
+
+.page-text
+{
+  color: white;
+  font-weight: bolder;
+  font-family: monospace;
+
+  padding-left: 50px;
 }

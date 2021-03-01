@@ -1,11 +1,11 @@
 import React from 'react';
-import PieChart from "./charts/PieChart";
+import PacientPieChart from "./charts/PacientPieChart";
 import AttendancePieChart from "./charts/AttendancePieChart";
 import RatioBarChart from './charts/RatioBarChart';
 import OutcomeBarChart from './charts/OutcomeBarChart';
 import "./App.css";
-import CuredBarChart from './charts/CuredBarChart';
-import CovidPositiveLineChart from './charts/CovidPostiveLineChart';
+import CovidCasesBarChart from './charts/CovidCasesBarChart';
+import CovidPositiveLineChart from './charts/CovidPositiveLineChart';
 import DeathsMonthLineChart from './charts/DeathsMonthLineChart';
 import CovidPerAgeBarChart from './charts/CovidPerAgeBarChart';
 
@@ -15,49 +15,48 @@ function App() {
     <div 
       className={"root-container"}>
 
-      <div className={"flex-row-container"}>
-        
-        <div className={"piechart-class"}>
-          <PieChart/>
-        </div>
+      <div 
+        className="page-header">
+          <h2
+            className="page-text">
+            Analise dos dados HSL
+          </h2>
+      </div>
 
-        <div className={"piechart-class"}>
+      <div 
+        className={"flex-row-container"}>
+        
+          <PacientPieChart/>
+
           <AttendancePieChart/>
-        </div>
 
-        <div className={"piechart-class"}>
           <RatioBarChart />
-        </div>
 
       </div>
 
-      <div className={"flex-row-container"}>
+      <div 
+        className={"flex-row-container"}>
         
-        <div className={"barchart-class"}>
-          <OutcomeBarChart/>
-        </div>
+        <OutcomeBarChart/>
 
-        <div className={"barchart-class"}>
-          <CuredBarChart/>
-        </div>
-
-        <div className={"barchart-class"}>
-          <CovidPositiveLineChart/>
-        </div>
+        <CovidCasesBarChart/>
 
       </div>
 
-      <div className={"flex-row-container"}>
-        
-        <div className={"barchart-class"}>
-          <DeathsMonthLineChart/>
-        </div>
-        
-        <div className={"barchart-class"}>
-          <CovidPerAgeBarChart/>
-        </div>
+      <div 
+        className={"flex-row-container"}>
 
+        <CovidPositiveLineChart/>
+        
+        <DeathsMonthLineChart/>
           
+      </div>
+
+      <div
+        className={"flex-row-container"}>
+
+        <CovidPerAgeBarChart/>
+
       </div>
 
     </div>

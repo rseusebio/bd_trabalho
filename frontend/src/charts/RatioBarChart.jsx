@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { ResponsiveBar } from '@nivo/bar'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Alert from '@material-ui/lab/Alert';
-
+import "./RatioBarChart.css"
 const axios = require("axios");
 
-const RatioBarChart = () => 
+const BarChart = () => 
 {    
     const  [{ loading, data, err}, setState ] = useState({ loading: true, data: null, err: null});
 
@@ -44,6 +44,7 @@ const RatioBarChart = () =>
     }
       
     return ( <ResponsiveBar
+
                 data={data}
                 keys={[ 'ratio', ]}
                 indexBy="city"
@@ -51,13 +52,13 @@ const RatioBarChart = () =>
                 padding={0.3}
                 valueScale={{ type: 'linear' }}
                 indexScale={{ type: 'band', round: true }}
-                colors={{ scheme: 'nivo' }}
+                colors={{ scheme: 'category10' }}
                 defs={[
                     {
-                        id: 'dots',
-                        type: 'patternDots',
-                        background: 'inherit',
-                        color: 'pink',
+                        id: 'ratio_dots',
+                        // type: 'patternDots',
+                        // background: 'inherit',
+                        color: 'white',
                         size: 4,
                         padding: 1,
                         stagger: true
@@ -68,10 +69,10 @@ const RatioBarChart = () =>
                         match: {
                             id: 'ratio'
                         },
-                        id: 'dots'
+                        id: 'ratio_dots'
                     }
                 ]}
-                borderColor={{ from: 'color', modifiers: [ [ 'darker', 1.6 ] ] }}
+                borderColor={{ from: 'color', modifiers: [ [ 'darker', 0.6 ] ] }}
                 axisTop={null}
                 axisRight={null}
                 axisBottom={{
@@ -122,6 +123,29 @@ const RatioBarChart = () =>
                 motionDamping={15}
             />
         )
+}
+
+const RatioBarChart = () => 
+{
+    return (
+        <div 
+            className="ratio-barchart-root">
+
+            <div 
+                className="ratio-barchart-header">
+                <h2
+                    className="ratio-barchart-text">
+                    Taxa Atendimentos x Paciente 
+                </h2>
+            </div>
+            
+            <div 
+                className="ratio-barchart-container">
+                <BarChart/>
+            </div>
+        
+        </div>
+    )
 }
 
 export default RatioBarChart;

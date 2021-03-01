@@ -6,7 +6,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import "./styles.css";
+import "./CovidPositiveLineChart.css";
 
 const axios = require("axios");
 
@@ -23,55 +23,65 @@ const SelectCity = ({ city, setState }) =>
         'Sao Paulo'
     ];
     
-    console.info( "city: " + city );
-
     return (
-        <div className={"selection-line-container"}>
-            <FormControl variant="outlined">
+        <div 
+            className={"covidposit-selection-container"}>
+            
+            <h2>
+                Casos detectados
+            </h2>
+            
+            <FormControl 
+                variant="outlined">
 
-            <InputLabel id="demo-simple-select-outlined-label">
-                Municipio
-            </InputLabel>
+                <InputLabel 
+                    id="demo-simple-select-outlined-label">
+                    Municipio
+                </InputLabel>
 
-            <Select
-            labelId="demo-simple-select-outlined-label"
-            id="demo-simple-select-outlined"
-            value={city}
-            onChange={( v )=>{
-                const c = v.target.value;
-                console.info( "next city: ", c);
-                setState({
-                    loading: true, 
-                    city: c, 
-                    data: null, 
-                    err: null
-                })
-            }}
-            label="Municipio"
-            >
-                {
-                    cities.map( v => {
-                        return (
-                            <MenuItem
-                                key={v.toLocaleLowerCase()} 
-                                value={v.toLowerCase()}>
-                                {
-                                    v
-                                }
-                            </MenuItem>
-                        )
-                    })
-                }
-            </Select>
-        </FormControl>
-      </div>
+                <Select
+                    labelId="demo-simple-select-outlined-label"
+                    id="demo-simple-select-outlined"
+                    value={city}
+                    onChange={( v )=>{
+                        const c = v.target.value;
+                        console.info( "next city: ", c);
+                        setState({
+                            loading: true, 
+                            city: c, 
+                            data: null, 
+                            err: null
+                        })
+                    }}
+                    label="Municipio"
+                    >
+                    {
+                        cities.map( v => {
+                            return (
+                                <MenuItem
+                                    key={v.toLocaleLowerCase()} 
+                                    value={v.toLowerCase()}>
+                                    {
+                                        v
+                                    }
+                                </MenuItem>
+                            )
+                        })
+                    }
+                </Select>
+
+            </FormControl>
+        
+        </div>
     )
-
 }
+
 const LineChart = ({ data }) => 
 {   
     return (
-        <div className={"linechart-container"}>
+        <div 
+            className={"covidposit-linechart-container"}>
+
             <ResponsiveLine
                 data={data}
                 margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
@@ -131,13 +141,12 @@ const LineChart = ({ data }) =>
                     }
                 ]}
             />
+
         </div>
-
     );
-
 }
 
-const CovidPositiveLineChart = () =>
+const DynamicLineChart = () =>
 {
     const  [{ loading, data, err, city}, setState ] = useState({ loading: true, data: null, err: null, city:"sao paulo" });
 
@@ -177,14 +186,29 @@ const CovidPositiveLineChart = () =>
         )
     }
 
-    return (
-        <div className={"linechart-root"}>
+    return (                
+        <div className={"covidposit-linechart-root"}>
+
             <SelectCity
                 city={city}
                 setState={setState}/>
+
             <LineChart
                 data={data}/>
+
         </div>  
+    )
+}
+
+const CovidPositiveLineChart = () => 
+{
+    return (
+        <div
+            className="covidposit-pod">
+
+            <DynamicLineChart/>        
+
+        </div>
     )
 }
 

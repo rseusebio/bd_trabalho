@@ -1,9 +1,11 @@
-import { createConnection, ConnectionConfig, Connection, Query } from "mysql";
+import { createConnection, ConnectionConfig, Connection } from "mysql";
 import ICityOutcomeQtd from "./interfaces/ICityOutcomeQtd";
 import ICityQtd from "./interfaces/ICityQtd";
 import ICityResultMonthQtd from "./interfaces/ICityResultMonthQtd";
+import ICityResultQtd from "./interfaces/ICityResultQtd";
 import ICityYearResult from "./interfaces/ICityYearResult";
 import { capitalize, randInteger } from "./utils";
+import cacheManager from "./CacheManager";
 
 const util = require("util");
 
@@ -20,10 +22,10 @@ class QueryManager
     {
         const config: ConnectionConfig = 
         {
-            host:     "localhost", 
+            host:     "", 
             user:     "", 
             password: "", 
-            database: "hospital"
+            database: ""
         }
 
         this.conn = createConnection(config);  
@@ -33,6 +35,14 @@ class QueryManager
 
     async pacientsPerCity()
     {
+        const key = `pacientes`;
+        const cachedRes = cacheManager.getValue( key );
+
+        if( cachedRes !== null )
+        {
+            return cachedRes;
+        }
+
         const query = util.promisify(this.conn.query).bind(this.conn);
 
         const queryStr = 
@@ -62,11 +72,21 @@ class QueryManager
             }
         });
 
+        cacheManager.setValue(key, result);
+
         return result;
     }
 
     async attendancePerCity()
     {
+        const key = `atendimentos`;
+        const cachedRes = cacheManager.getValue( key );
+
+        if( cachedRes !== null )
+        {
+            return cachedRes;
+        }
+
         const query = util.promisify(this.conn.query).bind(this.conn);
 
         const queryStr = 
@@ -98,11 +118,21 @@ class QueryManager
             }
         });
 
+        cacheManager.setValue(key, result);
+
         return result;
     }
 
     async ratioAttendacePerPatient()
     {
+        const key = `proporcao`;
+        const cachedRes = cacheManager.getValue( key );
+
+        if( cachedRes !== null )
+        {
+            return cachedRes;
+        }
+
         const query = util.promisify(this.conn.query).bind(this.conn);
 
         const queryStr = 
@@ -146,11 +176,21 @@ class QueryManager
             }
         });
 
+        cacheManager.setValue(key, result);
+
         return result;
     }
 
     async outcomePerCity() 
     {
+        const key = `desfechos`;
+        const cachedRes = cacheManager.getValue( key );
+
+        if( cachedRes !== null )
+        {
+            return cachedRes;
+        }
+
         const query = util.promisify(this.conn.query).bind(this.conn);
 
         const queryStr = 
@@ -187,6 +227,8 @@ class QueryManager
                 if( v.municipio == null )
                 {
                     municipio = "Anonimo";
+
+                    // return;
                 }
             
                 municipio = capitalize(municipio);
@@ -195,7 +237,8 @@ class QueryManager
                 {
                     map[municipio] = 
                     {
-                        municipio, 
+                        municipio,
+                        // alta: 0, 
                         obito: 0, 
                         transferencia: 0,
                         desistencia: 0,
@@ -221,6 +264,10 @@ class QueryManager
                 {
                     map[municipio].assistencia_domiciliar += qtd;
                 }
+                // else if( desfecho.indexOf("alta") >= 0)
+                // {
+                //     map[municipio].alta += qtd;
+                // }
             }
         );
         
@@ -230,12 +277,22 @@ class QueryManager
         {   
             result.push(map[prop]);
         }
+
+        cacheManager.setValue(key, result);
         
         return result;
     }
 
     async curedOutcomePerCity() 
     {
+        const key = `desfechoscurados`;
+        const cachedRes = cacheManager.getValue( key );
+
+        if( cachedRes !== null )
+        {
+            return cachedRes;
+        }
+
         const query = util.promisify(this.conn.query).bind(this.conn);
 
         const queryStr = 
@@ -300,12 +357,23 @@ class QueryManager
         {   
             result.push(map[prop]);
         }
+
+        cacheManager.setValue(key, result);
         
         return result;
     }
 
     async covPositivePerMonth(cidade: string) 
     {
+        
+        const key = `pacientescovid_${cidade}`;
+        const cachedRes = cacheManager.getValue( key );
+
+        if( cachedRes !== null )
+        {
+            return cachedRes;
+        }
+
         const query = util.promisify(this.conn.query).bind(this.conn);
 
         let restriction = `Paciente.municipio like "%${cidade}%"`;
@@ -460,12 +528,118 @@ class QueryManager
 
             result.push(map[prop]);
         }
+
+        cacheManager.setValue(key, result);
+        
+        return result;
+    }
+
+    async covPositive() 
+    {
+        const key = `covidcasos`;
+        const cachedRes = cacheManager.getValue( key );
+
+        if( cachedRes !== null )
+        {
+            return cachedRes;
+        }
+
+        const query = util.promisify(this.conn.query).bind(this.conn);
+
+        const queryStr = 
+        `
+        select 
+            table1.municipio, 
+            table2.de_resultado, 
+            count(*) as qtd
+        from
+        (
+            select 
+            Paciente.municipio as municipio, 
+            Atendimento.id_atendimento as id_atendimento
+            from Paciente 
+            inner join Atendimento
+            on Paciente.id_paciente = Atendimento.id_paciente
+        ) as table1
+        inner join 
+        (
+            select
+            id_atendimento,  
+            de_resultado
+            from Exame
+            where de_exame like "%cov%"
+            and de_resultado like "%detec%"
+        ) as table2
+        on table1.id_atendimento = table2.id_atendimento
+        group by de_resultado, municipio
+        order by municipio, de_resultado;
+        `;
+
+        let map = {};
+
+        let res: Array<ICityResultQtd> = await query(queryStr);
+
+        res.forEach( 
+            v => 
+            {
+                let municipio = v.municipio;
+
+                if( v.municipio == null )
+                {
+                    municipio = "Anonimo";
+
+                    return;
+                }
+            
+                municipio = capitalize(municipio);
+
+                if( !(municipio in map) )
+                {
+                    map[municipio] = 
+                    {
+                        municipio,
+                        covid: 0
+                    }
+                }
+
+                const { de_resultado, qtd } = v;
+
+                if( de_resultado.indexOf("indetectavel") >= 0 || 
+                    de_resultado.indexOf("nao detectado") >= 0 || 
+                    de_resultado.indexOf("ausencia de anticorpos contra sars-cov-2") >= 0 
+                )
+                {
+                    // do nothing
+                }
+                else 
+                {
+                    map[municipio].covid += qtd;
+                }
+            }
+        );
+        
+        let result = [];
+
+        for(let prop in map)
+        {  
+            result.push(map[prop]);
+        }
+
+        cacheManager.setValue(key, result);
         
         return result;
     }
 
     async deathsPerMonth(cidade: string) 
     {
+        const key = `mortespormes_${cidade}`;
+        const cachedRes = cacheManager.getValue( key );
+
+        if( cachedRes !== null )
+        {
+            return cachedRes;
+        }
+
         const query = util.promisify(this.conn.query).bind(this.conn);
 
         let restriction = `and Paciente.municipio like "%${cidade}%"`;
@@ -572,11 +746,21 @@ class QueryManager
 
         map["data"] = data;
 
+        cacheManager.setValue(key, [map]);
+
         return [map];
     }
 
     async covPositivePerAge(cidade: string) 
     {
+        const key = `covidporidade_${cidade}`;
+        const cachedRes = cacheManager.getValue( key );
+
+        if( cachedRes !== null )
+        {
+            return cachedRes;
+        }
+
         const query = util.promisify(this.conn.query).bind(this.conn);
 
         let restriction = `Paciente.municipio like "%${cidade}%"`;
@@ -597,7 +781,7 @@ class QueryManager
                 (
                     select 
                         Paciente.id_paciente,
-                        Paciente.ano_nascimento,
+                        substring(Paciente.ano_nascimento,1, 3) as ano_nascimento,
                         Paciente.municipio, 
                         Atendimento.id_atendimento
                     from 
@@ -641,6 +825,11 @@ class QueryManager
             {
                 let { ano_nascimento, de_resultado, qtd } = v;
 
+                if( !ano_nascimento )
+                {
+                    return;
+                }
+
                 if( !(ano_nascimento in map) )
                 {
                     map[ano_nascimento] = 
@@ -668,8 +857,13 @@ class QueryManager
 
         for( let prop in map )
         {   
+
+            map[prop].idade = `${map[prop].idade}0-${map[prop].idade}9`;
+
             result.push(map[prop]);
         }
+
+        cacheManager.setValue(key, result);
         
         return result;
     }

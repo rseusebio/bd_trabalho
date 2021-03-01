@@ -3,10 +3,11 @@ import React, { useState } from "react";
 import { ResponsivePie } from '@nivo/pie'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Alert from '@material-ui/lab/Alert';
+import "./AttendancePieChart.css"
+
 const axios = require("axios");
 
-
-const AttendancePieChart = () => 
+const PieChart = () => 
 { 
     const  [{ loading, data, err}, setState ] = useState({ loading: true, data: null, err: null});
 
@@ -50,7 +51,7 @@ const AttendancePieChart = () =>
                 innerRadius={0.5}
                 padAngle={0.7}
                 cornerRadius={3}
-                colors={{ scheme: 'nivo' }}
+                colors={{ scheme: 'set3' }}
                 borderWidth={1}
                 borderColor={{ from: 'color', modifiers: [ [ 'darker', 0.2 ] ] }}
                 radialLabelsSkipAngle={10}
@@ -60,18 +61,18 @@ const AttendancePieChart = () =>
                 sliceLabelsTextColor="#333333"
                 legends={[
                     {
-                        anchor: 'bottom',
-                        direction: 'row',
+                        anchor: 'bottom-right',
+                        direction: 'column',
                         justify: false,
                         translateX: 0,
                         translateY: 56,
                         itemsSpacing: 0,
-                        itemWidth: 100,
+                        itemWidth: 70,
                         itemHeight: 18,
                         itemTextColor: '#999',
                         itemDirection: 'left-to-right',
                         itemOpacity: 1,
-                        symbolSize: 18,
+                        symbolSize: 10,
                         symbolShape: 'circle',
                         effects: [
                             {
@@ -85,6 +86,28 @@ const AttendancePieChart = () =>
                 ]}
             />
         )
-    }
+}
 
-    export default AttendancePieChart;
+const AttendancePieChart = () => 
+{
+    return (
+        <div 
+            className="attendance-piechart-root">
+
+            <div 
+                className="attendance-piechart-header">
+                <h2
+                    className="attendance-piechart-text">
+                    Atendimentos 
+                </h2>
+            </div>
+            
+            <div 
+                className="attendance-piechart-container">
+                <PieChart/>
+            </div>
+        
+        </div>
+    )
+}
+export default AttendancePieChart;

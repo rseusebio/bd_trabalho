@@ -2,17 +2,17 @@ import React, { useState } from "react";
 import { ResponsiveBar } from '@nivo/bar'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Alert from '@material-ui/lab/Alert';
+import "./CovidCasesBarChart.css"
 
 const axios = require("axios");
 
-
-const CuredBarChart = () => 
+const BarChart = () => 
 {   
     const  [{ loading, data, err}, setState ] = useState({ loading: true, data: null, err: null});
 
     if(loading)
     {
-        axios.get("http://127.0.0.1:3001/desfechoscurados")
+        axios.get("http://127.0.0.1:3001/covidcasos")
         .then(
             res=>
             {    
@@ -47,32 +47,13 @@ const CuredBarChart = () =>
     return (
             <ResponsiveBar
                 data={data}
-                keys={[ 'alta']}
+                keys={[ 'covid']}
                 indexBy="municipio"
                 margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
                 padding={0.3}
                 valueScale={{ type: 'linear' }}
                 indexScale={{ type: 'band', round: true }}
-                colors={{ scheme: 'nivo' }}
-                defs={[
-                    {
-                        id: 'dots',
-                        type: 'patternDots',
-                        background: 'inherit',
-                        color: 'blue',
-                        size: 4,
-                        padding: 1,
-                        stagger: true
-                    }
-                ]}
-                fill={[
-                    {
-                        match: {
-                            id: 'alta'
-                        },
-                        id: 'dots'
-                    }
-                ]}
+                colors={{ scheme: 'pastel1' }}
                 borderColor={{ from: 'color', modifiers: [ [ 'darker', 1.6 ] ] }}
                 axisTop={null}
                 axisRight={null}
@@ -126,4 +107,27 @@ const CuredBarChart = () =>
         )
 }
 
-export default CuredBarChart;
+const CovidCasesBarChart = () => 
+{
+    return (
+        <div 
+            className="covidcases-barchart-root">
+
+            <div 
+                className="covidcases-barchart-header">
+                <h2
+                    className="covidcases-barchart-text">
+                    Casos detectados 
+                </h2>
+            </div>
+            
+            <div 
+                className="covidcases-barchart-container">
+                <BarChart/>
+            </div>
+        
+        </div>
+    )
+}
+
+export default CovidCasesBarChart;
