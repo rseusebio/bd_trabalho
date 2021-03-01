@@ -4,6 +4,6 @@ node_modules/**
 **/HSL_Janeiro2021/**
 HSL_Janeiro2021/**
 **/build/**
-**/build
+build/**
 **/__pycache__/**
 __pycache__/**
