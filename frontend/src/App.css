@@ -1,0 +1,37 @@
+.root-container
+{
+  background-color: #e5e9ec !important;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  min-width: 100vw;
+  min-height: 100vh;   
+}
+
+.piechart-class 
+{
+  height: 500px;
+  width:  800px;
+  background-color: white;
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+.barchart-class 
+{
+  height: 500px;
+  width:  900px;
+  background-color: white;
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+.flex-row-container
+{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
